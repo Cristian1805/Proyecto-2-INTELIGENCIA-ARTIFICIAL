@@ -2,7 +2,7 @@
 #Cristian Camilo Lozano 
 #Manuel Perdomo 
 
-from tkinter import *
+from tkinter import * 
 import numpy as np
 
 size_of_board = 600
@@ -201,7 +201,7 @@ class CuerdasyCorrales():
                                         outline=dot_color)
 
     def display_turn_text(self):
-        text = 'Next turn: '
+        text = 'Turno del : '
         if self.player1_turn:
             text += 'Player1'
             color = player1_color
@@ -223,10 +223,10 @@ class CuerdasyCorrales():
         self.canvas.create_rectangle(start_x, start_y, end_x, end_y, fill=color, outline='')
 
     def display_turn_text(self):
-        text = 'Next turn: '
+        text = 'Turno del : '
         if self.player1_turn:
             text += 'Player1'
-            color = player1_color
+            color = player1_color 
         else:
             text += 'Player2'
             color = player2_color
