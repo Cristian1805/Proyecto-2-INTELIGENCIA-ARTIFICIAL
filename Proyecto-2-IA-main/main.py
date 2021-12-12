@@ -33,7 +33,6 @@ class CuerdasyCorrales():
         self.canvas.pack()
         self.window.bind('<Button-1>', self.click)
         self.player1_starts = True
-        self.player2_starts = False
         self.refresh_board()
         self.play_again()
 
@@ -48,9 +47,6 @@ class CuerdasyCorrales():
         # Input from user in form of clicks
         self.player1_starts = not self.player1_starts
         self.player1_turn = not self.player1_starts
-#------------------No Borrar XD es mio
-        self.player2_starts = not self.player2_starts
-        self.player2_turn = not self.player2_starts
 #---------------
         self.reset_board = False
         self.turntext_handle = []
@@ -269,13 +265,10 @@ class CuerdasyCorrales():
         if self.player1_turn:
             text += 'Player1'
             color = player1_color
-        if self.player2_turn:
+        else:
             text += 'Player2'
             color = player2_color
-        else:
-            text += 'Empieza EL juego'
-            color = '141414'
-        
+       
 
         self.canvas.delete(self.turntext_handle)
         self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
@@ -348,8 +341,6 @@ class CuerdasyCorrales():
                     self.display_gameover()
                 else:
                     self.display_turn_text()
-            else:
-                print("espacio ocupado")
         else:
             self.canvas.delete("all")
             self.play_again()
