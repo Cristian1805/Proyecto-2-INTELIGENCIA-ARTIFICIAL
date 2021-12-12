@@ -82,8 +82,6 @@ class CuerdasyCorrales():
         
         else: 
             print("FIla Ocupada")
-            
-            
         return occupied
 #______________________________________________________________________________________
 
@@ -105,7 +103,7 @@ class CuerdasyCorrales():
             print("Columna desocupada")
         
         else: 
-            print("FIla Ocupada")
+            print("Fila Ocupada")
             
         return occupied
 
@@ -260,20 +258,29 @@ class CuerdasyCorrales():
                                         end_x+dot_width/2, fill=dot_color,
                                         outline=dot_color)
 
+#____________________________________________________________Turno Player 1
+
     def display_turn_text(self):
         text = 'Turno del : '
         if self.player1_turn:
             text += 'Player1'
             color = player1_color
+        
+            self.canvas.delete(self.turntext_handle)
+            self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
+                                                       size_of_board-distance_between_dots/8,
+                                                       font="cmr 15 bold", text=text, fill=color)
+
+        
         else:
             text += 'Player2'
             color = player2_color
-       
-
-        self.canvas.delete(self.turntext_handle)
-        self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
+            self.canvas.delete(self.turntext_handle)
+            self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
                                                        size_of_board-distance_between_dots/8,
                                                        font="cmr 15 bold", text=text, fill=color)
+
+
 
 
     def shade_box(self, box, color):
@@ -283,22 +290,6 @@ class CuerdasyCorrales():
         end_y = start_y + distance_between_dots - edge_width
         self.canvas.create_rectangle(start_x, start_y, end_x, end_y, fill=color, outline='')
 
-    def display_turn_text(self):
-        text = 'Turno del : '  #Cambio de turnos 
-        if self.player1_turn:
-            text += 'Player1'
-            color = player1_color 
-            
-        else:
-            text += 'Player2'
-            color = player2_color
-            #no me lo borren :V creo q desde aqui tocaria hacer el llamado al metodo cpu ya que aqui es cuando cambia jugador
-            self.cpu() 
-            
-        self.canvas.delete(self.turntext_handle)
-        self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
-                                                       size_of_board-distance_between_dots/8,
-                                                       font="cmr 15 bold",text=text, fill=color)
 
     def click(self, event):
         if not self.reset_board:
@@ -318,6 +309,7 @@ class CuerdasyCorrales():
                     self.display_gameover()
                 else:
                     self.display_turn_text()
+                    self.cpu()
         else:
             self.canvas.delete("all")
             self.play_again()
@@ -325,22 +317,45 @@ class CuerdasyCorrales():
 
     def cpu(self):
         print("CPUUUUUU")
-        x=random.randint(5,50)*10
-        y=random.randint(5,50)*10
+        x=random.randint(5,30)*10
+        y=random.randint(5,30)*10
         if not self.reset_board:
             grid_position = [x, y]
             logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
+            prueba=self.is_grid_occupied(logical_positon, valid_input)
+            print("Pruebaaaaa: ")
+            print(prueba)  
             if valid_input and not self.is_grid_occupiedcpu(logical_positon, valid_input):
                 self.update_board(valid_input, logical_positon)
                 self.make_edge(valid_input, logical_positon)
                 self.mark_box()
                 self.refresh_board()
-                self.player1_turn = not self.player1_turn
+                self.player1_turn = self.player1_turn
                 if self.is_gameover():
                     # self.canvas.delete("all")
                     self.display_gameover()
                 else:
                     self.display_turn_text()
+            
+            else:
+                while prueba is False:
+                    x=random.randint(5,30)*10
+                    y=random.randint(5,30)*10
+                    grid_position = [x, y]
+                    logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
+                    prueba=self.is_grid_occupied(logical_positon, valid_input)
+                    print("Fila OCupada RE-----INTENTANDO")
+
+
+            self.player1_turn = not self.player1_turn
+  
+    
+            if self.is_gameover():
+                self.display_gameover()
+            else:
+                self.display_turn_text()
+    
+                    
         else:
             self.canvas.delete("all")
             self.play_again()
