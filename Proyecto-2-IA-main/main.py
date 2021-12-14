@@ -64,34 +64,21 @@ class CuerdasyCorrales():
 
 
 #______________________________________________________________________________________
-    def is_grid_occupiedcpu(self, logical_position, type):
-        
-        print("Valida si la linea esta o no ocupada ya ")
-    
-        r = logical_position[0]
-        c = logical_position[1]
-        occupied = True
-
-        if type == 'row' and self.row_status[c][r] == 0:
-            occupied = False
-            print("Fila desocupada")
-            
-        if type == 'col' and self.col_status[c][r] == 0:
-            occupied = False
-            print("Columna desocupada")
-        
-        else: 
-            print("FIla Ocupada")
-        return occupied
-#______________________________________________________________________________________
 
 
     def is_grid_occupied(self, logical_position, type):
         
-        print("Valida si la linea esta o no ocupada ya ")
+        #"Valida si la linea esta o no ocupada ya "
     
         r = logical_position[0]
+        
+        print("R========= %i" %r)
+        
+        
         c = logical_position[1]
+        
+        print("C=========%i" %c)
+        
         occupied = True
 
         if type == 'row' and self.row_status[c][r] == 0:
@@ -317,20 +304,35 @@ class CuerdasyCorrales():
 
     def cpu(self):
         print("CPUUUUUU")
-        x=random.randint(5,30)*10
-        y=random.randint(5,30)*10
+        aleatorio=random.randint(0,58)
+
+        print("aleatoriox %i"%aleatorio)
+        print("aleatorioy %i"%aleatorio)
+        
+        arreglox=[49,50,49,48,50,117,105,110,98,82,111,199,193,202,200,193,194,150,150,150,150,150,248,248,248,248,248,299,299,299,299,299,299,349,349,349,349,349,403,403,403,403,403,403,447,447,447,447,447,497,497,497,497,497,550,550,550,550,550]
+        arregloy=[87,207,309,400,515,54,148,247,349,450,550,51,152,251,350,447,551,103,201,303,407,507,88,211,298,403,505,49,147,252,347,453,547,95,195,301,401,509,51,146,250,347,447,545,204,296,387,488,94,150,249,350,450,550,91,206,296,397,505]
+        
+        print("Arreglo X %i"%len(arreglox))
+        print("Arreglo Y %i"% len(arregloy))
+        
+        x=arreglox[aleatorio]
+        y=arregloy[aleatorio]
+        
+        print("X=={},Y=={}".format(x,y))
+        
         if not self.reset_board:
             grid_position = [x, y]
             logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
             prueba=self.is_grid_occupied(logical_positon, valid_input)
             print("Pruebaaaaa: ")
             print(prueba)  
-            if valid_input and not self.is_grid_occupiedcpu(logical_positon, valid_input):
+            if valid_input and not self.is_grid_occupied(logical_positon, valid_input):
                 self.update_board(valid_input, logical_positon)
                 self.make_edge(valid_input, logical_positon)
                 self.mark_box()
                 self.refresh_board()
-                self.player1_turn = self.player1_turn
+                self.player1_turn = False
+                self.player1_turn = not self.player1_turn
                 if self.is_gameover():
                     # self.canvas.delete("all")
                     self.display_gameover()
@@ -338,17 +340,26 @@ class CuerdasyCorrales():
                     self.display_turn_text()
             
             else:
-                while prueba is False:
-                    x=random.randint(5,30)*10
-                    y=random.randint(5,30)*10
+                while prueba != False:
+                    print("ENTROOOOOOOOOOOOOOOOOO")
+                    arreglox=[49,51,49,48,50,117,105,110,98,82,111,199,193,202,200,193,194,150,150,150,150,150,248,248,248,248,248,299,299,299,299,299,299,349,349,349,349,349,403,403,403,403,403,403,447,447,447,447,447,497,497,497,497,497,550,550,550,550,550]
+                    arregloy=[87,193,309,400,515,54,148,247,349,450,550,51,152,251,350,447,551,103,201,303,407,507,88,211,298,403,505,49,147,252,347,453,547,95,195,301,401,509,51,146,250,347,447,545,204,296,387,488,94,150,249,350,450,550,91,206,296,397,505]
+                    aleatorio=random.randint(0,58)
+                    
+                    x=arreglox[aleatorio]
+                    y=arregloy[aleatorio]
+                
                     grid_position = [x, y]
                     logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
-                    prueba=self.is_grid_occupied(logical_positon, valid_input)
+                    prueba = self.is_grid_occupied(logical_positon, valid_input)
                     print("Fila OCupada RE-----INTENTANDO")
 
-
-            self.player1_turn = not self.player1_turn
-  
+                self.update_board(valid_input, logical_positon)
+                self.make_edge(valid_input, logical_positon)
+                self.mark_box()
+                self.refresh_board()
+                self.player1_turn = False
+                self.player1_turn = not self.player1_turn    
     
             if self.is_gameover():
                 self.display_gameover()
