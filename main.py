@@ -1,9 +1,14 @@
 #Autores:
+
 #Cristian Camilo Lozano 
 #Manuel Perdomo 
+#Carolina Caicedo 
 
-from tkinter import * 
+from tkinter import *
+from typing import Match 
 import numpy as np
+import random
+import time
 
 size_of_board = 600
 number_of_dots = 6
@@ -36,12 +41,15 @@ class CuerdasyCorrales():
     def play_again(self):
         self.refresh_board()
         self.board_status = np.zeros(shape=(number_of_dots - 1, number_of_dots - 1))
+        print(self.board_status)
+    
         self.row_status = np.zeros(shape=(number_of_dots, number_of_dots - 1))
         self.col_status = np.zeros(shape=(number_of_dots - 1, number_of_dots))
         
         # Input from user in form of clicks
         self.player1_starts = not self.player1_starts
         self.player1_turn = not self.player1_starts
+#---------------
         self.reset_board = False
         self.turntext_handle = []
 
@@ -56,20 +64,42 @@ class CuerdasyCorrales():
     # The modules required to carry out game logic
     # ------------------------------------------------------------------
 
+
+#______________________________________________________________________________________
+
+
     def is_grid_occupied(self, logical_position, type):
+        
+        #"Valida si la linea esta o no ocupada ya "
+    
         r = logical_position[0]
+        
+        print("R========= %i" %r)
+        
+        
         c = logical_position[1]
+        
+        print("C=========%i" %c)
+        
         occupied = True
 
         if type == 'row' and self.row_status[c][r] == 0:
             occupied = False
+            print("Fila desocupada")
+            
         if type == 'col' and self.col_status[c][r] == 0:
             occupied = False
-
+            print("Columna desocupada")
+        
+        else: 
+            print("Fila Ocupada")
+            
         return occupied
 
     def convert_grid_to_logical_position(self, grid_position):
         grid_position = np.array(grid_position)
+        print("Posicion Coordenadas click: "+str( grid_position) )
+        
         position = (grid_position-distance_between_dots/4)//(distance_between_dots/2)
 
         type = False
@@ -79,18 +109,30 @@ class CuerdasyCorrales():
             c = int(position[1]//2)
             logical_position = [r, c]
             type = 'row'
+            
+            print("Pinta Una linea horizontal")
+            
             # self.row_status[c][r]=1
+            
         elif position[0] % 2 == 0 and (position[1] - 1) % 2 == 0:
             c = int((position[1] - 1) // 2)
             r = int(position[0] // 2)
             logical_position = [r, c]
             type = 'col'
 
+            print("Pinta Una linea vertical")
+            
+            print("Logical Position" + str(logical_position))
+            
         return logical_position, type
 
     def mark_box(self):
         boxes = np.argwhere(self.board_status == -4)
+        
+        print("Cajas Completas")
+        print(boxes)
         for box in boxes:
+            print (box)
             if list(box) not in self.already_marked_boxes and list(box) !=[]:
                 self.already_marked_boxes.append(list(box))
                 color = player1_color_light
@@ -106,11 +148,16 @@ class CuerdasyCorrales():
     def update_board(self, type, logical_position):
         r = logical_position[0]
         c = logical_position[1]
+        
+        print("c=="+ str(c))
+        print("r=="+ str(r))
+        
+        
         val = 1
         if self.player1_turn:
             val =- 1
 
-        if c < (number_of_dots-1) and r < (number_of_dots-1):
+        if c < (number_of_dots-1) and r < (number_of_dots-1): #number_of_dots=6
             self.board_status[c][r] += val
 
         if type == 'row':
@@ -200,19 +247,29 @@ class CuerdasyCorrales():
                                         end_x+dot_width/2, fill=dot_color,
                                         outline=dot_color)
 
+#____________________________________________________________Turno Player 1
+
     def display_turn_text(self):
         text = 'Turno del : '
         if self.player1_turn:
             text += 'Player1'
             color = player1_color
+        
+            self.canvas.delete(self.turntext_handle)
+            self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
+                                                       size_of_board-distance_between_dots/8,
+                                                       font="cmr 15 bold", text=text, fill=color)
+
+        
         else:
             text += 'Player2'
             color = player2_color
-
-        self.canvas.delete(self.turntext_handle)
-        self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
+            self.canvas.delete(self.turntext_handle)
+            self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
                                                        size_of_board-distance_between_dots/8,
                                                        font="cmr 15 bold", text=text, fill=color)
+
+
 
 
     def shade_box(self, box, color):
@@ -222,22 +279,11 @@ class CuerdasyCorrales():
         end_y = start_y + distance_between_dots - edge_width
         self.canvas.create_rectangle(start_x, start_y, end_x, end_y, fill=color, outline='')
 
-    def display_turn_text(self):
-        text = 'Turno del : '
-        if self.player1_turn:
-            text += 'Player1'
-            color = player1_color 
-        else:
-            text += 'Player2'
-            color = player2_color
-
-        self.canvas.delete(self.turntext_handle)
-        self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
-                                                       size_of_board-distance_between_dots/8,
-                                                       font="cmr 15 bold",text=text, fill=color)
 
     def click(self, event):
         if not self.reset_board:
+            print("X===,Y==")
+            print([event.x,event.y])
             grid_position = [event.x, event.y]
             logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
             if valid_input and not self.is_grid_occupied(logical_positon, valid_input):
@@ -252,13 +298,81 @@ class CuerdasyCorrales():
                     self.display_gameover()
                 else:
                     self.display_turn_text()
+                    self.cpu()
         else:
             self.canvas.delete("all")
             self.play_again()
             self.reset_board = False
 
+    def cpu(self):
+        print("CPUUUUUU")
+        aleatorio=random.randint(0,58)
+
+        print("aleatoriox %i"%aleatorio)
+        print("aleatorioy %i"%aleatorio)
+        
+        arreglox=[49,50,49,48,50,117,105,110,98,82,111,199,193,202,200,193,194,150,150,150,150,150,248,248,248,248,248,299,299,299,299,299,299,349,349,349,349,349,403,403,403,403,403,403,447,447,447,447,447,497,497,497,497,497,550,550,550,550,550]
+        arregloy=[87,207,309,400,515,54,148,247,349,450,550,51,152,251,350,447,551,103,201,303,407,507,88,211,298,403,505,49,147,252,347,453,547,95,195,301,401,509,51,146,250,347,447,545,204,296,387,488,94,150,249,350,450,550,91,206,296,397,505]
+        
+        print("Arreglo X %i"%len(arreglox))
+        print("Arreglo Y %i"% len(arregloy))
+        
+        x=arreglox[aleatorio]
+        y=arregloy[aleatorio]
+        
+        print("X=={},Y=={}".format(x,y))
+        
+        if not self.reset_board:
+            grid_position = [x, y]
+            logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
+            prueba=self.is_grid_occupied(logical_positon, valid_input)
+            print("Pruebaaaaa: ")
+            print(prueba)  
+            if valid_input and not self.is_grid_occupied(logical_positon, valid_input):
+                self.update_board(valid_input, logical_positon)
+                self.make_edge(valid_input, logical_positon)
+                self.mark_box()
+                self.refresh_board()
+                self.player1_turn = False
+                self.player1_turn = not self.player1_turn
+                if self.is_gameover():
+                    # self.canvas.delete("all")
+                    self.display_gameover()
+                else:
+                    self.display_turn_text()
+            
+            else:
+                while prueba != False:
+                    print("ENTROOOOOOOOOOOOOOOOOO")
+                    arreglox=[49,51,49,48,50,117,105,110,98,82,111,199,193,202,200,193,194,150,150,150,150,150,248,248,248,248,248,299,299,299,299,299,299,349,349,349,349,349,403,403,403,403,403,403,447,447,447,447,447,497,497,497,497,497,550,550,550,550,550]
+                    arregloy=[87,193,309,400,515,54,148,247,349,450,550,51,152,251,350,447,551,103,201,303,407,507,88,211,298,403,505,49,147,252,347,453,547,95,195,301,401,509,51,146,250,347,447,545,204,296,387,488,94,150,249,350,450,550,91,206,296,397,505]
+                    aleatorio=random.randint(0,58)
+                    
+                    x=arreglox[aleatorio]
+                    y=arregloy[aleatorio]
+                
+                    grid_position = [x, y]
+                    logical_positon, valid_input = self.convert_grid_to_logical_position(grid_position)
+                    prueba = self.is_grid_occupied(logical_positon, valid_input)
+                    print("Fila OCupada RE-----INTENTANDO")
+
+                self.update_board(valid_input, logical_positon)
+                self.make_edge(valid_input, logical_positon)
+                self.mark_box()
+                self.refresh_board()
+                self.player1_turn = False
+                self.player1_turn = not self.player1_turn    
+    
+            if self.is_gameover():
+                self.display_gameover()
+            else:
+                self.display_turn_text()
+    
+                    
+        else:
+            self.canvas.delete("all")
+            self.play_again()
+            self.reset_board = False      
 
 game_instance = CuerdasyCorrales()
-game_instance.mainloop() 
-
-  
+game_instance.mainloop()  
