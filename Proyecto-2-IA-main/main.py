@@ -203,7 +203,7 @@ class CuerdasyCorrales():
             text = 'Winner: Player 1 '
             color = player1_color
         elif player2_score > player1_score:
-            text = 'Winner: Player 2 '
+            text = 'Winner: Machine '
             color = player2_color
         else:
             text = 'Its a tie'
@@ -217,7 +217,7 @@ class CuerdasyCorrales():
                                 text=score_text)
 
         score_text = 'Player 1 : ' + str(player1_score) + '\n'
-        score_text += 'Player 2 : ' + str(player2_score) + '\n'
+        score_text += 'Machine : ' + str(player2_score) + '\n'
         # score_text += 'Tie                    : ' + str(self.tie_score)
         self.canvas.create_text(size_of_board / 2, 3 * size_of_board / 4, font="cmr 30 bold", fill=Green_color,
                                 text=score_text)
@@ -260,7 +260,7 @@ class CuerdasyCorrales():
 
         
         else:
-            text += 'Player2'
+            text += 'Machine'
             color = player2_color
             self.canvas.delete(self.turntext_handle)
             self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
@@ -304,7 +304,7 @@ class CuerdasyCorrales():
 
     def cpu(self):
         print("CPUUUUUU")
-        aleatorio=random.randint(0,58)
+        aleatorio=random.randint(0,59)
 
         print("aleatoriox %i"%aleatorio)
         print("aleatorioy %i"%aleatorio)
@@ -344,7 +344,7 @@ class CuerdasyCorrales():
                     print("ENTROOOOOOOOOOOOOOOOOO")
                     arreglox=[49,51,49,48,50,117,105,110,98,82,111,199,193,202,200,193,194,150,150,150,150,150,248,248,248,248,248,299,299,299,299,299,299,349,349,349,349,349,403,403,403,403,403,403,447,447,447,447,447,497,497,497,497,497,550,550,550,550,550]
                     arregloy=[87,193,309,400,515,54,148,247,349,450,550,51,152,251,350,447,551,103,201,303,407,507,88,211,298,403,505,49,147,252,347,453,547,95,195,301,401,509,51,146,250,347,447,545,204,296,387,488,94,150,249,350,450,550,91,206,296,397,505]
-                    aleatorio=random.randint(0,58)
+                    aleatorio=random.randint(0,59)
                     
                     x=arreglox[aleatorio]
                     y=arregloy[aleatorio]
