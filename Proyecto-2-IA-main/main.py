@@ -6,7 +6,6 @@ from tkinter import *
 from typing import Match 
 import numpy as np
 import random
-import time
 
 size_of_board = 600
 number_of_dots = 6
@@ -15,17 +14,15 @@ symbol_thickness = 50
 dot_color = '#000000'  
 player1_color = '#0492CF'
 player1_color_light = '#67B0CF'
-player2_color = '#EE4035'
-player2_color_light = '#EE7E77'
+machine_color = '#EE4035'
+machine_color_light = '#EE7E77'
 Green_color = '#7BC043'
 dot_width = 0.25*size_of_board/number_of_dots
 edge_width = 0.1*size_of_board/number_of_dots
 distance_between_dots = size_of_board / (number_of_dots)
 
 class CuerdasyCorrales():
-    # ------------------------------------------------------------------
-    # Initialization functions
-    # ------------------------------------------------------------------
+    
     def __init__(self):
         self.window = Tk()
         self.window.title('Cuerdas y Corrales')
@@ -44,7 +41,6 @@ class CuerdasyCorrales():
         self.row_status = np.zeros(shape=(number_of_dots, number_of_dots - 1))
         self.col_status = np.zeros(shape=(number_of_dots - 1, number_of_dots))
         
-        # Input from user in form of clicks
         self.player1_starts = not self.player1_starts
         self.player1_turn = not self.player1_starts
 #---------------
@@ -57,10 +53,6 @@ class CuerdasyCorrales():
     def mainloop(self):
         self.window.mainloop()
 
-    # ------------------------------------------------------------------
-    # Logical Functions:
-    # The modules required to carry out game logic
-    # ------------------------------------------------------------------
 
 
 #______________________________________________________________________________________
@@ -110,7 +102,6 @@ class CuerdasyCorrales():
             
             print("Pinta Una linea horizontal")
             
-            # self.row_status[c][r]=1
             
         elif position[0] % 2 == 0 and (position[1] - 1) % 2 == 0:
             c = int((position[1] - 1) // 2)
@@ -140,7 +131,7 @@ class CuerdasyCorrales():
         for box in boxes:
             if list(box) not in self.already_marked_boxes and list(box) !=[]:
                 self.already_marked_boxes.append(list(box))
-                color = player2_color_light
+                color = machine_color_light
                 self.shade_box(box, color)
 
     def update_board(self, type, logical_position):
@@ -155,7 +146,7 @@ class CuerdasyCorrales():
         if self.player1_turn:
             val =- 1
 
-        if c < (number_of_dots-1) and r < (number_of_dots-1): #number_of_dots=6
+        if c < (number_of_dots-1) and r < (number_of_dots-1):
             self.board_status[c][r] += val
 
         if type == 'row':
@@ -170,11 +161,6 @@ class CuerdasyCorrales():
 
     def is_gameover(self):
         return (self.row_status == 1).all() and (self.col_status == 1).all()
-
-    # ------------------------------------------------------------------
-    # Drawing Functions:
-    # The modules required to draw required game based object on canvas
-    # ------------------------------------------------------------------
 
     def make_edge(self, type, logical_position):
         if type == 'row':
@@ -191,20 +177,20 @@ class CuerdasyCorrales():
         if self.player1_turn:
             color = player1_color
         else:
-            color = player2_color
+            color = machine_color
         self.canvas.create_line(start_x, start_y, end_x, end_y, fill=color, width=edge_width)
 
     def display_gameover(self):
         player1_score = len(np.argwhere(self.board_status == -4))
-        player2_score = len(np.argwhere(self.board_status == 4))
+        machine_score = len(np.argwhere(self.board_status == 4))
 
-        if player1_score > player2_score:
+        if player1_score > machine_score:
             # Player 1 wins
             text = 'Winner: Player 1 '
             color = player1_color
-        elif player2_score > player1_score:
+        elif machine_score > player1_score:
             text = 'Winner: Machine '
-            color = player2_color
+            color = machine_color
         else:
             text = 'Its a tie'
             color = 'gray'
@@ -217,7 +203,7 @@ class CuerdasyCorrales():
                                 text=score_text)
 
         score_text = 'Player 1 : ' + str(player1_score) + '\n'
-        score_text += 'Machine : ' + str(player2_score) + '\n'
+        score_text += 'Machine : ' + str(machine_score) + '\n'
         # score_text += 'Tie                    : ' + str(self.tie_score)
         self.canvas.create_text(size_of_board / 2, 3 * size_of_board / 4, font="cmr 30 bold", fill=Green_color,
                                 text=score_text)
@@ -261,7 +247,7 @@ class CuerdasyCorrales():
         
         else:
             text += 'Machine'
-            color = player2_color
+            color = machine_color
             self.canvas.delete(self.turntext_handle)
             self.turntext_handle = self.canvas.create_text(size_of_board - 5*len(text),
                                                        size_of_board-distance_between_dots/8,
